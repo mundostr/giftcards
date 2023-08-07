@@ -17,7 +17,7 @@ const Login = () => {
     })();
 
     return () => {}
-  }, []) // Array vació, se ejecuta SOLO al montar
+  }, []) // Array vacío, se ejecuta SOLO al montar
 
   const handleChange = (event) => {
     setFrm({...frm, [event.target.name]: event.target.value});
