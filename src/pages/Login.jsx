@@ -28,6 +28,8 @@ const Login = () => {
 
     let usuarioIndex = usuarios.findIndex(item => { return item.username === frm.username });
 
+    console.log(usuarioIndex);
+
     if (usuarioIndex > -1) {
       if (frm.password === usuarios[usuarioIndex].password) {
         const data = { username: usuarios[usuarioIndex].username, id: usuarios[usuarioIndex].id };
