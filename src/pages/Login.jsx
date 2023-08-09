@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Container, Form, Button } from 'react-bootstrap'
-import Modal from 'react-bootstrap/Modal';
+
 
 import { users_data } from '../helpers/data.js'
 
