@@ -1,4 +1,4 @@
-import { Container, Row, Col } from 'react-bootstrap'
+import { Container, Row, Col, Card } from 'react-bootstrap'
 import giftcard from '../img/giftcard.png'
 
 const Home = () => {
@@ -14,7 +14,9 @@ const Home = () => {
           </Col>
 
           <Col className="col-xs-12  col-md-6 col-home">
-            <img className="img-home" src={giftcard} alt="imagen gif" style={{width: '100%'}} />
+            <Row className="card p-3">
+              <img className="img-home" src={giftcard} alt="imagen gif" style={{width: '100%'}} />
+            </Row>
           </Col>
         </Row>
       </Container>
