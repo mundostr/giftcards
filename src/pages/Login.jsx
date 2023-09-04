@@ -44,8 +44,7 @@ const Login = () => {
 
         if (resultadoJson.status == 'OK') {
           localStorage.setItem('cart_user', JSON.stringify(resultadoJson.data));
-          console.log(resultadoJson.data)
-          // navigate('/giftcards', { replace: true });
+          navigate('/giftcards', { replace: true });
         } else {
           setAlertError(resultadoJson.data)
           frmElement.querySelector('input[type=email]').focus()
