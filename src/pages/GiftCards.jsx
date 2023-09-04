@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
 
-// import { giftcards_data } from '../helpers/data.js'
+const API_URL = 'http://localhost:5000/api/giftcards'
 
 const GiftCards = () => {
   let user = JSON.parse(localStorage.getItem('cart_user')) || null
@@ -11,9 +11,8 @@ const GiftCards = () => {
 
   useEffect(() => {
     (async () => {
-      // Envío solicitud al backend de nodeJS para recibir una lista de tarjetas
       try {
-        const data = await fetch('http://localhost:5000/api/giftcards')
+        const data = await fetch(API_URL)
         const dataJson = await data.json()
         setGiftCards(dataJson.data)
       } catch (error) {
@@ -30,10 +29,10 @@ const GiftCards = () => {
 
   return (
     <>
-      <Container className="col col-md-4 offset-md-4 mt-4 mb-4 p-4 bg-light container-blocks">
+      <Container className="col-xs-12 mt-4 mb-4 p-4 bg-light container-blocks">
         <Row>
           <Col>
-            <h1>GiftCards</h1>
+            <h1>GiftCards disponibles</h1>
 
             { user &&
               <Button variant="warning">
@@ -48,16 +47,19 @@ const GiftCards = () => {
         <Row>
           { giftCards && giftCards.map(card => {
             return (
-                <div key={card.id} className="card h-100 mb-3 p-3">
-                  <img src={card.image} className="card-img-top" alt={card.title} />
-                  <div className="card-body">
-                    <h5 className="card-title">{card.title}</h5>
-                    <h3 className="card-text text-end">${card.price}</h3>
-                    <div className="d-grid gap-2">
-                      {user && ( <button className="btn btn-warning" onClick={() => {addCart(card);}}>Agregar</button> )}
+                <Col xs={12} md={6} lg={4} key={card._id}>
+                  <div className="card mb-4">
+                    <h5 className="card-title" style={{padding: '0.5em'}}>{card.title}</h5>
+                    
+                    <img src={card.image} alt={card.title} style={{width: '100%'}} />
+                    <div className="card-body">
+                      <h3 className="card-text text-end">{card.price}</h3>
+                      <div className="d-grid gap-2">
+                        {user && ( <button className="btn btn-warning" onClick={() => {addCart(card);}}>Agregar</button> )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Col>
             )
             })
           }
