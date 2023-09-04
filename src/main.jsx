@@ -6,12 +6,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import "font-awesome/css/font-awesome.css"
 import './index.css'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+/* ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-)
-
-/* ReactDOM.createRoot(document.getElementById('root')).render(
-  <App />
 ) */
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <App />
+)
