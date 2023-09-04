@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Form, Button, Alert } from 'react-bootstrap'
+import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap'
 
 import { users_data } from '../helpers/data.js'
 
@@ -41,7 +41,36 @@ const Login = () => {
 
   return (
     <>
-      <Container className="col col-md-4 offset-md 4 mt-4 p-4 bg-light container-blocks">
+      <Container className="container-fluid container-home">
+        <Row>
+          <Col className="col-xs-12 col-md-6 col-home">
+            <Row>
+              <h1>¿Tienes una Gift Card?</h1>
+              <h3>Prueba todas las marcas que la aceptan de manera online</h3>
+            </Row>
+          </Col>
+
+          <Col className="col-xs-12  col-md-6 col-home">
+            <Row className="card p-3" style={{width: '100%'}}>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Usuario</Form.Label>
+                  <Form.Control type="text" placeholder="Nombre" value={frm.username} name="username" maxLength={16} required  autoFocus onChange={handleChange} />
+                </Form.Group>
+                
+                <Form.Group className="mb-3">
+                  <Form.Label>Clave</Form.Label>
+                  <Form.Control type="password" value={frm.password} name="password" maxLength={12} required onChange={handleChange} />
+                </Form.Group>
+                
+                <Button type="submit" variant="warning">Ingresar</Button>
+              </Form>
+            </Row>
+          </Col>
+        </Row>
+      </Container>
+
+      {/* <Container className="col col-md-4 offset-md 4 mt-4 p-4 bg-light container-blocks">
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Usuario</Form.Label>
@@ -55,7 +84,7 @@ const Login = () => {
 
           <Button type="submit" variant="warning">Ingresar</Button>
         </Form>
-      </Container>
+      </Container> */}
     </>
   )
 }
