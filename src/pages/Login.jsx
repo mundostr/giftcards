@@ -2,18 +2,15 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap'
 
-import { users_data } from '../helpers/data.js'
+import './Login.css'
 
 const Login = () => {
   const navigate = useNavigate()
-  const [usuarios, setUsuarios] = useState([])
-  const [frm, setFrm] = useState({ username: '', password: '' })
+  const [alertError, setAlertError] = useState('')
+  const [frm, setFrm] = useState({ email: '', password: '' })
   
   useEffect(() => {
     (async () => {
-      /* const resultado = await fetch(URL_API)
-      const resultadoJson = await resultado.json(); */
-      setUsuarios(users_data)
     })();
 
     return () => {}
@@ -23,21 +20,39 @@ const Login = () => {
     setFrm({...frm, [event.target.name]: event.target.value});
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault()
 
-    let usuarioIndex = usuarios.findIndex(item => { return item.username === frm.username });
+    const frmElement = e.currentTarget
 
-    console.log(usuarioIndex);
+    if (!frmElement.checkValidity()) {
+      setAlertError('Por favor, complete los campos requeridos')
+      frmElement.querySelector('input[type=email]').focus()
+    } else {
+      if (frm.password.length > 0 && frm.password.length < 6) {
+        setAlertError('La clave debe tener entre 6 y 12 caracteres')
+        frmElement.querySelector('input[type=password]').focus()
+      } else {
+        setAlertError('')
 
-    if (usuarioIndex > -1) {
-      if (frm.password === usuarios[usuarioIndex].password) {
-        const data = { username: usuarios[usuarioIndex].username, id: usuarios[usuarioIndex].id };
-        localStorage.setItem('cart_user', JSON.stringify(data));
-        navigate('/giftcards', { replace: true });
+        const resultado = await fetch('https://rolling55ibackend-production.up.railway.app/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(frm)
+        })
+        const resultadoJson = await resultado.json();
+
+        if (resultadoJson.status == 'OK') {
+          localStorage.setItem('cart_user', JSON.stringify(resultadoJson.data));
+          console.log(resultadoJson.data)
+          // navigate('/giftcards', { replace: true });
+        } else {
+          setAlertError(resultadoJson.data)
+          frmElement.querySelector('input[type=email]').focus()
+        }
       }
     }
-  };
+  }
 
   return (
     <>
@@ -52,10 +67,10 @@ const Login = () => {
 
           <Col className="col-xs-12  col-md-6 col-home">
             <Row className="card p-3" style={{width: '100%'}}>
-              <Form onSubmit={handleSubmit}>
+              <Form noValidate onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Usuario</Form.Label>
-                  <Form.Control type="text" placeholder="Nombre" value={frm.username} name="username" maxLength={16} required  autoFocus onChange={handleChange} />
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" placeholder="Email" value={frm.email} name="email" maxLength={32} required autoFocus onChange={handleChange} />
                 </Form.Group>
                 
                 <Form.Group className="mb-3">
@@ -64,6 +79,8 @@ const Login = () => {
                 </Form.Group>
                 
                 <Button type="submit" variant="warning">Ingresar</Button>
+
+                {alertError && <Alert className="mt-3" key="warning" variant="warning">{alertError}</Alert>}
               </Form>
             </Row>
           </Col>

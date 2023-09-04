@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
 
-const API_URL = 'http://localhost:5000/api/giftcards'
+// const API_URL = 'http://localhost:5000/api/giftcards'
+const API_URL = 'https://rolling55ibackend-production.up.railway.app/api/giftcards' // backend desplegado en Railway.app
 
 const GiftCards = () => {
   let user = JSON.parse(localStorage.getItem('cart_user')) || null

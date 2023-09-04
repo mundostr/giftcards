@@ -3,5 +3,5 @@ input:valid {
 }
 
 input:invalid {
-    outline: 2px solid red;
+    outline: 2px solid #900;
 }
