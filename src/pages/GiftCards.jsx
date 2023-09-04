@@ -32,7 +32,7 @@ const GiftCards = () => {
       <Container className="col-xs-12 mt-4 mb-4 p-4 bg-light container-blocks">
         <Row>
           <Col>
-            <h1>GiftCards disponibles</h1>
+            <h1>GiftCards aceptadas</h1>
 
             { user &&
               <Button variant="warning">
