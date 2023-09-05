@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
 
 const GiftCards = () => {
+  // Si hay info del usuario disponible en el localStorage, la recuperamos
+  // en lugar de realizar una nueva consulta a la base de datos
   const user = JSON.parse(localStorage.getItem('cart_user')) || {cart: []}
   user.total = user.cart.reduce((acc, current) => {return acc + parseFloat(current.price)}, 0) || 0
 
@@ -34,7 +36,7 @@ const GiftCards = () => {
     }
   }
 
-  // useEffect de Array vacío, se ejecuta SOLO al montar
+  // useEffect de Array vacío, se ejecuta SOLO al montar para recuperar las giftcards disponibles
   useEffect(() => {
     (async () => {
       try {
@@ -56,6 +58,9 @@ const GiftCards = () => {
           <Col>
             <h1>GiftCards aceptadas</h1>
 
+            {/*
+            Si hay un token en la info de usuario, significa que está autenticado, se muestra el resumen del carrito
+            */}
             { user.hasOwnProperty('token') &&
               <div className="cart-box">
                 <h5>Productos en carrito</h5>
@@ -85,6 +90,11 @@ const GiftCards = () => {
                     <div className="card-body">
                       <h3 className="card-text text-end">$ {card.price} AR</h3>
                       <div style={{width: '100%', textAlign: 'right'}}>
+                        {/*
+                        Similar al resumen, si hay token, habilitamos el botón para cargar al carrito.
+                        Por supuesto, el usuario podría saltar este control, pero al actualizar el carrito en el backend,
+                        deberá presentar un token válido.
+                        */}
                         {user.hasOwnProperty('token') && ( <button className="btn btn-warning" onClick={() => {updateCart(card)}} style={{width: '64px'}}><i className="fa fa-cart-plus fa-2x"></i></button> )}
                       </div>
                     </div>
