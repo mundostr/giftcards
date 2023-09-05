@@ -14,7 +14,11 @@ const GiftCards = () => {
     try {
       user.cart.push(card)
 
-      const update = await fetch(`https://rolling55ibackend-production.up.railway.app/api/users/cart/${user._id}`, {
+      // Recordar que por defecto al utilizar fetch, realizamos una petición tipo GET
+      // Si deseamos otro tipo, debemos indicarlo con method, en este caso podemos ver
+      // también la forma correcta de armar los headers para el tipo de dato enviado y
+      // la inclusión del token que nos identifica, caso contrario el endpoint rechazará la solicitud.
+      const update = await fetch(`https://rolling55ibackend-production.up.railway.app/api/users/cart/add`, {
         method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -25,6 +29,8 @@ const GiftCards = () => {
 
       const result = await update.json()
 
+      // Si todo está ok, guardamos los datos recibidos en el localStorage para tenerlos a mano,
+      // y recalculamos el total del carrito, esto también podría almacenarse en la base de datos.
       if (result.status === 'OK') {
         localStorage.setItem('cart_user', JSON.stringify(user))
         setUserCart(current => { return {cart: user.cart, total: current.total + parseFloat(card.price)} })
