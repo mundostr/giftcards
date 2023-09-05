@@ -10,10 +10,16 @@ function App() {
     <Router>
       <Menu />
       
+      {/*
+      Nuestro paquete de rutas solo contiene un Home, un Login y el listado de Giftcars.
+      Por supuesto podemos agregar otras según sea necesario. El route de 404 siempre queda
+      al final para capturar cualquier ruta incorrecta que se introduzca manualmente en la URL.
+      */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/giftcards" element={<GiftCards />} />
+        
         <Route path="*" element={<Error404 />} />
       </Routes>
     </Router>
