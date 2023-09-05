@@ -1,3 +1,6 @@
+// Este archivo ya no se utiliza, ahora todas las consultas se hacen a base de datos
+// mediante endpoints en el backend
+
 export const users_data = [
   {
     "id": 1,
