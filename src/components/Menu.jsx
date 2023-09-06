@@ -7,6 +7,7 @@ const Menu = () => {
 
   const logOut = () => {
     localStorage.clear('cart_user');
+    localStorage.clear('cart_user_backup');
     navigate('/', { replace: true });
   };
 

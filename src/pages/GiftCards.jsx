@@ -1,14 +1,26 @@
 import { useEffect, useState } from 'react'
-import { Container, Row, Col, Button } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+import { Container, Row, Col, Button, Toast } from 'react-bootstrap'
+import GiftCard from '../components/GiftCard.jsx'
+import appConfig from '../config.js'
+
+import './GiftCards.css'
 
 const GiftCards = () => {
+  const navigate = useNavigate();
+
   // Si hay info del usuario disponible en el localStorage, la recuperamos
   // en lugar de realizar una nueva consulta a la base de datos
-  const user = JSON.parse(localStorage.getItem('cart_user')) || {cart: []}
-  user.total = user.cart.reduce((acc, current) => {return acc + parseFloat(current.price)}, 0) || 0
+  const user = JSON.parse(localStorage.getItem('cart_user')) || { cart: [] }
+  user.total = user.cart.reduce((acc, current) => { return acc + parseFloat(current.price) }, 0) || 0
 
   const [giftCards, setGiftCards] = useState([])
-  const [userCart, setUserCart] = useState({cart: user.cart, total: user.total})
+  const [userCart, setUserCart] = useState({ cart: user.cart, total: user.total })
+  const [toastMsg, setToastMsg] = useState({ show: false, msg: '' })
+
+  const showCart = () => {
+    navigate('/cart', { replace: false })
+  }
 
   const updateCart = async (card) => {
     try {
@@ -18,13 +30,13 @@ const GiftCards = () => {
       // Si deseamos otro tipo, debemos indicarlo con method, en este caso podemos ver
       // también la forma correcta de armar los headers para el tipo de dato enviado y
       // la inclusión del token que nos identifica, caso contrario el endpoint rechazará la solicitud.
-      const update = await fetch(`https://rolling55ibackend-production.up.railway.app/api/users/cart/add`, {
+      const update = await fetch(`${appConfig.API_BASE_URL}/${appConfig.ADD_CART_ENDPOINT}`, {
         method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}`
-          },
-          body: JSON.stringify({ cart: user.cart })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify({ cart: user.cart })
       })
 
       const result = await update.json()
@@ -33,12 +45,13 @@ const GiftCards = () => {
       // y recalculamos el total del carrito, esto también podría almacenarse en la base de datos.
       if (result.status === 'OK') {
         localStorage.setItem('cart_user', JSON.stringify(user))
-        setUserCart(current => { return {cart: user.cart, total: current.total + parseFloat(card.price)} })
+        setUserCart(current => { return { cart: user.cart, total: current.total + parseFloat(card.price) } })
+        setToastMsg({ show: true, msg: 'Producto agregado!' })
       } else {
-        console.log(result.data)
+        setToastMsg({ show: true, msg: result.data })
       }
     } catch (err) {
-      console.log(err.message)
+      setToastMsg({ show: true, msg: err.message })
     }
   }
 
@@ -46,70 +59,60 @@ const GiftCards = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await fetch('https://rolling55ibackend-production.up.railway.app/api/giftcards')
+        const data = await fetch(`${appConfig.API_BASE_URL}/${appConfig.GET_GIFTCARDS_ENDPOINT}`)
         const dataJson = await data.json()
         setGiftCards(dataJson.data)
-      } catch (error) {
-        console.log(error.message)
+      } catch (err) {
+        setToastMsg({ show: true, msg: err.message })
       }
     })()
-    
-    return () => { }
+
+    return () => {}
   }, []);
 
   return (
     <>
-      <Container className="col-xs-12 mt-4 mb-4 p-4 bg-light container-blocks">
+      <Container className="mt-3 mb-3 p-3 bg-light container-blocks">
         <Row>
-          <Col>
+          <Col xs={12}>
             <h1>GiftCards aceptadas</h1>
-
+            <hr />
+            
             {/*
             Si hay un token en la info de usuario, significa que está autenticado, se muestra el resumen del carrito
             */}
-            { user.hasOwnProperty('token') &&
+            {user.hasOwnProperty('token') &&
               <div className="cart-box">
-                <h5>Productos en carrito</h5>
+                <h5>GiftCards en carrito</h5>
 
                 <div>
-                  <Button variant="warning" style={{width: '100%'}}>
+                  <Button variant="warning" onClick={showCart} style={{ width: '100%' }}>
                     <i className="fa fa-shopping-cart fa-2x"></i>
                     <span className="badge bg-secondary ms-2">{userCart.cart.length > 0 ? userCart.cart.length : '0'}</span>
-                    <span className="badge bg-secondary ms-1" style={{fontSize: '110%'}}>$ {userCart.total > 0 ? userCart.total : '0'}</span>
+                    <span className="badge bg-secondary ms-1" style={{ fontSize: '110%' }}>$ {userCart.total > 0 ? userCart.total.toFixed(2) : '0.00'}</span>
                   </Button>
                 </div>
               </div>
             }
-            <hr />
           </Col>
         </Row>
-        
+
         <Row>
-          { giftCards && giftCards.map(card => {
-            return (
-                <Col xs={12} md={6} lg={3} key={card._id}>
-                  <div className="card mb-4">
-                    <h5 className="card-title" style={{padding: '0.5em'}}>{card.title}</h5>
-                    
-                    <img src={card.image} alt={card.title} style={{width: '75%', height: '75%'}} />
-                    
-                    <div className="card-body">
-                      <h3 className="card-text text-end">$ {card.price} AR</h3>
-                      <div style={{width: '100%', textAlign: 'right'}}>
-                        {/*
-                        Similar al resumen, si hay token, habilitamos el botón para cargar al carrito.
-                        Por supuesto, el usuario podría saltar este control, pero al actualizar el carrito en el backend,
-                        deberá presentar un token válido.
-                        */}
-                        {user.hasOwnProperty('token') && ( <button className="btn btn-warning" onClick={() => {updateCart(card)}} style={{width: '64px'}}><i className="fa fa-cart-plus fa-2x"></i></button> )}
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-            )
-            })
-          }
+          <Col className="cards_grid">
+            {giftCards.map(card => <GiftCard key={card._id} user={user} card={card} updateCart={updateCart} showAdd={true} />)}
+          </Col>
         </Row>
+
+        <Toast show={toastMsg.show} delay={3000} onClose={() => setToastMsg({ show: false, msg: '' })} autohide style={{ position: 'fixed', bottom: '1em', right: '1em', zIndex: '1000', backgroundColor: '#333', color: '#fff'}}>
+          <Toast.Header>
+            {/* <img src="imagen" className="rounded me-2" alt="RollingCode" /> */}
+            <i className="fa fa-shopping-cart fa-2x"></i>&nbsp;
+            <strong className="me-auto">Carrito</strong>
+            <small>Ahora</small>
+          </Toast.Header>
+          
+          <Toast.Body>{toastMsg.msg}</Toast.Body>
+        </Toast>
       </Container>
     </>
   );
