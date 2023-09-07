@@ -47,6 +47,13 @@ body {
     margin-bottom: 0.5em;
 }
 
+.loading-box {
+    position: fixed;
+    top: 1em;
+    left: 1em;
+    z-index: 50000;
+}
+
 #menu a.active {
     background-color: #fc0;
     color: #333;

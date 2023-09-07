@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Row, Col, Button, Toast } from 'react-bootstrap'
+import { Container, Row, Col, Button, Toast, Spinner } from 'react-bootstrap'
 import GiftCard from '../components/GiftCard.jsx'
 import appConfig from '../config.js'
 
@@ -17,6 +17,7 @@ const GiftCards = () => {
   const [giftCards, setGiftCards] = useState([])
   const [userCart, setUserCart] = useState({ cart: user.cart, total: user.total })
   const [toastMsg, setToastMsg] = useState({ show: false, msg: '' })
+  const [loading, setLoading] = useState(false)
 
   const showCart = () => {
     navigate('/cart', { replace: false })
@@ -59,11 +60,14 @@ const GiftCards = () => {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true)
         const data = await fetch(`${appConfig.API_BASE_URL}/${appConfig.GET_GIFTCARDS_ENDPOINT}`)
         const dataJson = await data.json()
         setGiftCards(dataJson.data)
+        setLoading(false)
       } catch (err) {
         setToastMsg({ show: true, msg: err.message })
+        setLoading(true)
       }
     })()
 
@@ -73,6 +77,8 @@ const GiftCards = () => {
   return (
     <>
       <Container className="mt-3 mb-3 p-3 bg-light container-blocks">
+        {loading && <Spinner className="loading-box" animation="grow" variant="warning" />}
+
         <Row>
           <Col xs={12}>
             <h1>GiftCards aceptadas</h1>
