@@ -98,6 +98,7 @@ const GiftCards = () => {
         </Row>
 
         <Row>
+          {/* Insertamos el componente GiftCard, pasándole las props necesarias */}
           <Col className="cards_grid">
             {giftCards.map(card => <GiftCard key={card._id} user={user} card={card} updateCart={updateCart} showAdd={true} />)}
           </Col>
