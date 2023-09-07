@@ -5,6 +5,14 @@ import Login from "./pages/Login.jsx"
 import Menu from './components/Menu.jsx'
 import Error404 from './pages/Error404.jsx'
 import GiftCards from './pages/GiftCards.jsx'
+import { create } from 'zustand'
+
+export const globalState = create((set) => {
+  return {
+    loading: false,
+    toggleLoading: () => set((state) => ({ loading: !state.loading }))
+  }
+})
 
 function App() {
   return (
@@ -28,4 +36,4 @@ function App() {
   );
 }
 
-export default App;
+export default App
