@@ -31,6 +31,7 @@ const GiftCards = () => {
       // Si deseamos otro tipo, debemos indicarlo con method, en este caso podemos ver
       // también la forma correcta de armar los headers para el tipo de dato enviado y
       // la inclusión del token que nos identifica, caso contrario el endpoint rechazará la solicitud.
+      setLoading(true)
       const update = await fetch(`${appConfig.API_BASE_URL}/${appConfig.ADD_CART_ENDPOINT}`, {
         method: 'PUT',
         headers: {
@@ -41,6 +42,7 @@ const GiftCards = () => {
       })
 
       const result = await update.json()
+      setLoading(false)
 
       // Si todo está ok, guardamos los datos recibidos en el localStorage para tenerlos a mano,
       // y recalculamos el total del carrito, esto también podría almacenarse en la base de datos.
@@ -53,6 +55,7 @@ const GiftCards = () => {
       }
     } catch (err) {
       setToastMsg({ show: true, msg: err.message })
+      setLoading(false)
     }
   }
 
