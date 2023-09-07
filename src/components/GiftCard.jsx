@@ -19,11 +19,8 @@ function GiftCard({ user, card, updateCart, showAdd }) {
               Por supuesto, el usuario podría saltar este control, pero al actualizar el carrito en el backend,
               deberá presentar un token válido.
               */}
-              {user.hasOwnProperty('token') && showAdd ?
-                <button className="btn btn-secondary" onClick={() => { updateCart(card) }} style={{ width: '64px' }}><i className="fa fa-cart-plus fa-2x"></i></button>
-                :
-                <button className="btn btn-secondary" onClick={() => { updateCart(card) }} style={{ width: '48px' }}><i className="fa fa-solid fa-trash"></i></button>
-              }
+              {user.hasOwnProperty('token') && showAdd && <button className="btn btn-secondary" onClick={() => { updateCart(card) }} style={{ width: '64px' }}><i className="fa fa-cart-plus fa-2x"></i></button>}
+              {user.hasOwnProperty('token') && !showAdd && <button className="btn btn-secondary" onClick={() => { updateCart(card) }} style={{ width: '48px' }}><i className="fa fa-solid fa-trash"></i></button>}
             </div>
           </div>
         </div>
