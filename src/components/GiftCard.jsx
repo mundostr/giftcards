@@ -1,3 +1,8 @@
+/**
+ * Este código estaba antes en Giftcards, lo hemos separado ahora en un pequeño componente,
+ * que por supuesto puede reusarse. En este caso lo estamos aprovechando desde Giftcards y Cart
+*/
+
 function GiftCard({ user, card, updateCart, showAdd }) {
   return (
     <>
