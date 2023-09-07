@@ -18,7 +18,7 @@ function Cart() {
     setUserCart(current => { return { cart: user.cart, total: current.total - parseFloat(card.price), modified: true } })
   }
 
-  const updateDbCart = async (card) => {
+  const updateDbCart = async () => {
     try {
       const update = await fetch(`${appConfig.API_BASE_URL}/${appConfig.ADD_CART_ENDPOINT}`, {
         method: 'PUT',
@@ -33,6 +33,7 @@ function Cart() {
 
       if (result.status === 'OK') {
         setToastMsg({ show: true, msg: 'Carrito actualizado!' })
+        setUserCart(current => { return { cart: current.cart, total: current.total, modified: false } })
       } else {
         setToastMsg({ show: true, msg: result.data })
       }
@@ -42,11 +43,10 @@ function Cart() {
   }
 
   const restoreCart = () => {
-    const backup = localStorage.getItem('cart_user_backup')
-    localStorage.setItem('cart_user', backup)
-    const newUser = JSON.parse(localStorage.getItem('cart_user')) || { cart: [] }
-    newUser.total = newUser.cart.reduce((acc, current) => { return acc + parseFloat(current.price) }, 0) || 0
-    setUserCart({ cart: newUser.cart, total: newUser.total, modified: false })
+    const backup = JSON.parse(localStorage.getItem('cart_user_backup'))
+    localStorage.setItem('cart_user', JSON.stringify(backup))
+    backup.total = backup.cart.reduce((acc, current) => { return acc + parseFloat(current.price) }, 0)
+    setUserCart({ cart: backup.cart, total: backup.total, modified: false })
   }
 
   const checkout = () => {
