@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Form, Button, Toast } from 'react-bootstrap'
 import appConfig from '../config.js'
+import globalState from '../state.js'
 
 import './Login.css'
 
@@ -9,6 +10,8 @@ const Login = () => {
   const navigate = useNavigate()
   const [frm, setFrm] = useState({ email: '', password: '' })
   const [toastMsg, setToastMsg] = useState({ show: false, msg: '' })
+  // Recuperamos el método global setLoading para cambiar el estado del spinner
+  const setLoading = globalState((state) => state.setLoading)
   
   // useEffect de Array vacío, se ejecuta SOLO al montar
   useEffect(() => {
@@ -40,6 +43,7 @@ const Login = () => {
           frmElement.querySelector('input[type=password]').focus()
         } else {
           // Si todo está bien, realizamos una solicitud POST a la API, enviando el contenido del formulario
+          setLoading(true)
           const resultado = await fetch(`${appConfig.API_BASE_URL}/${appConfig.POST_USERS_LOGIN}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -49,6 +53,7 @@ const Login = () => {
 
           // Si la API responde con un OK, quiere decir que la autenticación fue exitosa, disponemos de datos
           // de usuario, incluyendo un token, los almacenamos en localStorage.
+          setLoading(false)
           if (resultadoJson.status == 'OK') {
             localStorage.setItem('cart_user', JSON.stringify(resultadoJson.data));
             localStorage.setItem('cart_user_backup', JSON.stringify(resultadoJson.data));
@@ -62,6 +67,7 @@ const Login = () => {
       }
     } catch (err) {
       setToastMsg({ show: true, msg: err.message })
+      setLoading(false)
     }
   }
 

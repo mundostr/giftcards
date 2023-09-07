@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Button, Toast } from 'react-bootstrap'
 import GiftCard from '../components/GiftCard.jsx'
 import appConfig from '../config.js'
+import globalState from '../state.js'
 
 import './GiftCards.css'
 
@@ -17,6 +18,8 @@ const GiftCards = () => {
   const [giftCards, setGiftCards] = useState([])
   const [userCart, setUserCart] = useState({ cart: user.cart, total: user.total })
   const [toastMsg, setToastMsg] = useState({ show: false, msg: '' })
+  // Recuperamos el método global setLoading para cambiar el estado del spinner
+  const setLoading = globalState((state) => state.setLoading)
 
   const showCart = () => {
     navigate('/cart', { replace: false })
@@ -30,6 +33,7 @@ const GiftCards = () => {
       // Si deseamos otro tipo, debemos indicarlo con method, en este caso podemos ver
       // también la forma correcta de armar los headers para el tipo de dato enviado y
       // la inclusión del token que nos identifica, caso contrario el endpoint rechazará la solicitud.
+      setLoading(true)
       const update = await fetch(`${appConfig.API_BASE_URL}/${appConfig.ADD_CART_ENDPOINT}`, {
         method: 'PUT',
         headers: {
@@ -50,8 +54,10 @@ const GiftCards = () => {
       } else {
         setToastMsg({ show: true, msg: result.data })
       }
+      setLoading(false)
     } catch (err) {
       setToastMsg({ show: true, msg: err.message })
+      setLoading(false)
     }
   }
 
@@ -59,11 +65,14 @@ const GiftCards = () => {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true)
         const data = await fetch(`${appConfig.API_BASE_URL}/${appConfig.GET_GIFTCARDS_ENDPOINT}`)
         const dataJson = await data.json()
         setGiftCards(dataJson.data)
+        setLoading(false)
       } catch (err) {
         setToastMsg({ show: true, msg: err.message })
+        setLoading(false)
       }
     })()
 
