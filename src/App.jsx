@@ -5,18 +5,17 @@ import Login from "./pages/Login.jsx"
 import Menu from './components/Menu.jsx'
 import Error404 from './pages/Error404.jsx'
 import GiftCards from './pages/GiftCards.jsx'
-import { create } from 'zustand'
-
-export const globalState = create((set) => {
-  return {
-    loading: false,
-    toggleLoading: () => set((state) => ({ loading: !state.loading }))
-  }
-})
+import { Spinner } from 'react-bootstrap'
+import globalState from './state.js'
 
 function App() {
+  // Recuperamos la variable global loading, para mostrar o no el spinner
+  const loading = globalState((state) => state.loading)
+
   return (
     <Router>
+      {loading && <Spinner className="loading-box" animation="grow" variant="warning" />}
+
       <Menu />
       
       {/*

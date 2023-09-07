@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Row, Col, Button, Toast, Spinner } from 'react-bootstrap'
+import { Container, Row, Col, Button, Toast } from 'react-bootstrap'
 import GiftCard from '../components/GiftCard.jsx'
 import appConfig from '../config.js'
+import globalState from '../state.js'
 
 import './GiftCards.css'
 
@@ -17,7 +18,8 @@ const GiftCards = () => {
   const [giftCards, setGiftCards] = useState([])
   const [userCart, setUserCart] = useState({ cart: user.cart, total: user.total })
   const [toastMsg, setToastMsg] = useState({ show: false, msg: '' })
-  const [loading, setLoading] = useState(false)
+  // Recuperamos el método global setLoading para cambiar el estado del spinner
+  const setLoading = globalState((state) => state.setLoading)
 
   const showCart = () => {
     navigate('/cart', { replace: false })
@@ -42,7 +44,6 @@ const GiftCards = () => {
       })
 
       const result = await update.json()
-      setLoading(false)
 
       // Si todo está ok, guardamos los datos recibidos en el localStorage para tenerlos a mano,
       // y recalculamos el total del carrito, esto también podría almacenarse en la base de datos.
@@ -53,6 +54,7 @@ const GiftCards = () => {
       } else {
         setToastMsg({ show: true, msg: result.data })
       }
+      setLoading(false)
     } catch (err) {
       setToastMsg({ show: true, msg: err.message })
       setLoading(false)
@@ -70,7 +72,7 @@ const GiftCards = () => {
         setLoading(false)
       } catch (err) {
         setToastMsg({ show: true, msg: err.message })
-        setLoading(true)
+        setLoading(false)
       }
     })()
 
@@ -80,8 +82,6 @@ const GiftCards = () => {
   return (
     <>
       <Container className="mt-3 mb-3 p-3 bg-light container-blocks">
-        {loading && <Spinner className="loading-box" animation="grow" variant="warning" />}
-
         <Row>
           <Col xs={12}>
             <h1>GiftCards aceptadas</h1>
